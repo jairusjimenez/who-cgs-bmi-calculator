@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WHO CGS BMI &amp; Child Growth Calculator (0–60 Months)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-primary: #0891B2;
+      --color-primary-dark: #0E7490;
+      --color-secondary: #22D3EE;
+      --color-accent: #059669;
+      --color-background: #ECFEFF;
+      --color-foreground: #164E63;
+      --color-card: #FFFFFF;
+      --color-muted: #E8F1F6;
+      --color-muted-foreground: #475569;
+      --color-border: #A5F3FC;
+      --color-border-subtle: #CFEFF5;
+      --color-destructive: #DC2626;
+      --color-amber: #B45309;
+      --color-amber-soft: #FEF3C7;
+      --color-green-soft: #D1FAE5;
+      --color-red-soft: #FEE2E2;
+      --color-purple: #6D28D9;
+      --color-purple-soft: #EDE9FE;
+      --shadow-soft: 0 12px 28px -10px rgba(22, 78, 99, 0.12), 0 2px 6px -1px rgba(8, 145, 178, 0.06);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Figtree', 'Noto Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, var(--color-background) 0%, #F4FBFD 100%);
+      color: var(--color-foreground);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    .container { max-width: 1160px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      color: #FFFFFF;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 18px rgba(8, 145, 178, 0.28);
+      flex-shrink: 0;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-foreground);
+    }
+
+    .subtitle {
+      font-size: 0.88rem;
+      color: var(--color-muted-foreground);
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-card);
+      color: var(--color-primary-dark);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      box-shadow: 0 2px 8px rgba(8, 145, 178, 0.08);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-muted-foreground);
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--color-accent);
+      background: var(--color-green-soft);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .live-dot::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-accent);
+    }
+
+    .field { margin-bottom: 18px; }
+
+    .field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-foreground);
+    }
+
+    .unit-toggle {
+      display: inline-flex;
+      background: var(--color-muted);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .unit-toggle button {
+      border: none;
+      background: transparent;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--color-muted-foreground);
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .unit-toggle button:hover { color: var(--color-foreground); }
+
+    .unit-toggle button.active {
+      background: var(--color-card);
+      color: var(--color-primary-dark);
+      box-shadow: 0 1px 4px rgba(22, 78, 99, 0.12);
+    }
+
+    .unit-toggle button:focus-visible,
+    .sex-btn:focus-visible,
+    .chip:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    .input-wrap { position: relative; display: flex; align-items: center; }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 54px 12px 14px;
+      font-family: inherit;
+      font-size: 1.08rem;
+      font-weight: 700;
+      border: 1.5px solid var(--color-border-subtle);
+      border-radius: 12px;
+      background: #F8FDFF;
+      color: var(--color-foreground);
+      transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--color-primary);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.14);
+      outline: none;
+    }
+
+    .input-suffix {
+      position: absolute;
+      right: 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--color-muted-foreground);
+      pointer-events: none;
+    }
+
+    .sex-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .sex-btn {
+      padding: 11px 12px;
+      border: 1.5px solid var(--color-border-subtle);
+      background: #F8FDFF;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--color-muted-foreground);
+      transition: all 180ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sex-btn:hover { border-color: var(--color-primary); color: var(--color-foreground); }
+
+    .sex-btn.active.boy {
+      border-color: var(--color-primary);
+      background: #E0F7FA;
+      color: var(--color-primary-dark);
+    }
+
+    .sex-btn.active.girl {
+      border-color: #DB2777;
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-top: 10px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    .presets {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-border-subtle);
+    }
+
+    .presets-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-muted-foreground);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .preset-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .chip {
+      border: 1px solid var(--color-border-subtle);
+      background: #F8FDFF;
+      color: var(--color-foreground);
+      font-family: inherit;
+      font-size: 0.77rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 180ms ease;
+    }
+
+    .chip:hover {
+      border-color: var(--color-primary);
+      background: var(--color-background);
+      color: var(--color-primary-dark);
+    }
+
+    .results-stack { display: flex; flex-direction: column; gap: 20px; }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 680px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 14px 12px 36px; }
+      .card { padding: 16px; }
+      h1 { font-size: 1.25rem; }
+      .z-ticks span:nth-child(2),
+      .z-ticks span:nth-child(6) { display: none; }
+      .sex-btn, .chip { min-height: 44px; }
+      input[type="number"] { font-size: 16px; min-height: 46px; }
+    }
+
+    .kpi {
+      background: var(--color-card);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 4px 0 4px;
+      color: var(--color-foreground);
+    }
+
+    .kpi-sub { font-size: 0.81rem; color: var(--color-muted-foreground); }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .status-normal { background: var(--color-green-soft); color: #065F46; }
+    .status-warn { background: var(--color-amber-soft); color: #92400E; }
+    .status-danger { background: var(--color-red-soft); color: #991B1B; }
+    .status-tall { background: var(--color-purple-soft); color: #5B21B6; }
+
+    .z-bar-wrap { margin-top: 10px; }
+
+    .z-bar {
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #DC2626 0%, #DC2626 12.5%,
+        #F59E0B 12.5%, #F59E0B 25%,
+        #10B981 25%, #10B981 75%,
+        #F59E0B 75%, #F59E0B 87.5%,
+        #DC2626 87.5%, #DC2626 100%
+      );
+      position: relative;
+    }
+
+    .z-marker {
+      position: absolute;
+      top: -5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-foreground);
+      border: 3px solid #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+      transform: translateX(-50%);
+      transition: left 220ms ease;
+    }
+
+    .z-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--color-muted-foreground);
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    .chart-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: #F8FDFF;
+      border-radius: 12px;
+      border: 1px solid var(--color-border-subtle);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--color-muted-foreground);
+      font-weight: 600;
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .swatch { width: 14px; height: 3px; border-radius: 2px; }
+
+    .note-box {
+      font-size: 0.84rem;
+      color: var(--color-foreground);
+      background: #F4FBFD;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div>
+          <h1>WHO CGS BMI &amp; Growth Calculator</h1>
+          <div class="subtitle">Automatic BMI, BMI-for-Age &amp; Height-for-Age using WHO Child Growth Standards</div>
+        </div>
+      </div>
+      <div class="pill-badge">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+        </svg>
+        WHO CGS · 0–60 Months
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card" aria-label="Child Measurements Input">
+        <div class="card-title">
+          <span>Measurements</span>
+          <span class="live-dot">Auto-computes</span>
+        </div>
+
+        <div class="field">
+          <div class="field-header"><label>Sex (WHO LMS Reference)</label></div>
+          <div class="sex-group">
+            <button type="button" class="sex-btn boy active" id="btnBoy" onclick="setSex('boy')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <circle cx="10" cy="14" r="5"/><path d="M19 5l-5.4 5.4"/><path d="M15 5h4v4"/>
+              </svg>
+              Boy
+            </button>
+            <button type="button" class="sex-btn girl" id="btnGirl" onclick="setSex('girl')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <circle cx="12" cy="9" r="5"/><path d="M12 14v7"/><path d="M9 18h6"/>
+              </svg>
+              Girl
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <label for="ageInput">Age (Height-in-Age &amp; BMI-for-Age)</label>
+            <div class="unit-toggle">
+              <button type="button" class="active" id="ageUnitMo" onclick="setAgeUnit('mo')">Months</button>
+              <button type="button" id="ageUnitYr" onclick="setAgeUnit('yr')">Years</button>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="ageInput" value="24" min="0" max="60" step="1" inputmode="decimal" oninput="compute()" />
+            <span class="input-suffix" id="ageSuffix">mo</span>
+          </div>
+          <input type="range" id="ageSlider" min="0" max="60" step="1" value="24" oninput="syncAgeSlider()" aria-label="Age slider" />
+          <div class="kpi-sub" id="ageHelper" style="margin-top:6px;">24 months (2 yr 0 mo) · Standing height standard</div>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <label for="heightInput">Height / Length</label>
+            <div class="unit-toggle">
+              <button type="button" class="active" id="hUnitCm" onclick="setHeightUnit('cm')">cm</button>
+              <button type="button" id="hUnitM" onclick="setHeightUnit('m')">m</button>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="heightInput" value="87.8" min="30" max="150" step="0.1" inputmode="decimal" oninput="compute()" />
+            <span class="input-suffix" id="heightSuffix">cm</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <label for="weightInput">Weight</label>
+            <div class="unit-toggle">
+              <button type="button" class="active" id="wUnitKg" onclick="setWeightUnit('kg')">kg</button>
+              <button type="button" id="wUnitLbs" onclick="setWeightUnit('lbs')">lbs</button>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <input type="number" id="weightInput" value="12.7" min="1" max="60" step="0.1" inputmode="decimal" oninput="compute()" />
+            <span class="input-suffix" id="weightSuffix">kg</span>
+          </div>
+        </div>
+
+        <div class="presets">
+          <span class="presets-label">Quick Clinical Presets</span>
+          <div class="preset-chips">
+            <button type="button" class="chip" onclick="applyPreset('boy', 24, 87.8, 12.7)">24m Boy · Median</button>
+            <button type="button" class="chip" onclick="applyPreset('girl', 36, 95.6, 16.9)">36m Girl · Overweight</button>
+            <button type="button" class="chip" onclick="applyPreset('boy', 12, 75.7, 8.2)">12m Boy · Thinness</button>
+            <button type="button" class="chip" onclick="applyPreset('girl', 48, 96.0, 14.2)">48m Girl · Stunted</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="results-stack">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-label">Computed BMI</div>
+            <div class="kpi-value" id="bmiValue">16.5</div>
+            <div class="kpi-sub" id="bmiFormula">12.7 kg / (0.878 m)²</div>
+            <span class="status-badge status-normal" id="bmiStatusBadge">Normal Weight</span>
+          </div>
+
+          <div class="kpi">
+            <div class="kpi-label">BMI-for-Age (WHO CGS)</div>
+            <div class="kpi-value" id="bmiZValue">+0.00 SD</div>
+            <div class="kpi-sub" id="bmiPctValue">50.0th percentile</div>
+            <span class="status-badge status-normal" id="bmiCgsBadge">Normal (-2 to +2 SD)</span>
+          </div>
+
+          <div class="kpi">
+            <div class="kpi-label">Height-for-Age (WHO CGS)</div>
+            <div class="kpi-value" id="hazValue">+0.00 SD</div>
+            <div class="kpi-sub" id="hazPctValue">50.0th percentile</div>
+            <span class="status-badge status-normal" id="hazBadge">Normal Stature</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>WHO CGS BMI-for-Age Z-Score Position</span>
+            <span id="zRangeText" style="font-size:0.8rem; color:var(--color-foreground); text-transform:none;"></span>
+          </div>
+          <div class="z-bar-wrap">
+            <div class="z-bar">
+              <div class="z-marker" id="zMarker" style="left:50%;"></div>
+            </div>
+            <div class="z-ticks">
+              <span>-4 SD</span>
+              <span>-3 SD (Severe)</span>
+              <span>-2 SD (Thin)</span>
+              <span>0 (Median)</span>
+              <span>+2 SD (Overwt)</span>
+              <span>+3 SD (Obese)</span>
+              <span>+4 SD</span>
+            </div>
+          </div>
+          <div class="note-box" id="clinicalSummary"></div>
+        </div>
+
+        <div class="card">
+          <div class="chart-header">
+            <div class="card-title" style="margin-bottom:0;">WHO Child Growth Standards Curve (0–60 Months)</div>
+            <div class="unit-toggle">
+              <button type="button" class="active" id="tabBmi" onclick="setChartMode('bmi')">BMI-for-Age</button>
+              <button type="button" id="tabHeight" onclick="setChartMode('height')">Height-for-Age</button>
+            </div>
+          </div>
+          <svg id="growthChart" class="chart-svg" viewBox="0 0 700 320" role="img" aria-label="WHO Child Growth Standards Curve"></svg>
+          <div class="legend">
+            <div class="legend-item"><span class="swatch" style="background:#DC2626;"></span> +3 SD / -3 SD</div>
+            <div class="legend-item"><span class="swatch" style="background:#D97706;"></span> +2 SD / -2 SD</div>
+            <div class="legend-item"><span class="swatch" style="background:#0891B2; height:4px;"></span> Median (0 SD)</div>
+            <div class="legend-item"><span class="swatch" style="background:#164E63; width:10px; height:10px; border-radius:50%;"></span> Child Measurement</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const WHO_BMI_LMS = {
+      boy: [
+        [0, -1.5647, 13.3615, 0.09849],
+        [6, -0.4727, 17.3995, 0.08182],
+        [12, -0.1133, 17.3681, 0.07921],
+        [24, 0.1798, 16.4862, 0.07823],
+        [36, 0.3392, 15.6514, 0.07914],
+        [48, 0.4074, 15.2281, 0.08051],
+        [60, 0.4194, 15.0253, 0.08216]
+      ],
+      girl: [
+        [0, -1.4552, 13.1118, 0.09772],
+        [6, -0.3541, 16.8530, 0.08311],
+        [12, -0.0401, 16.8370, 0.08083],
+        [24, 0.2109, 16.1265, 0.08022],
+        [36, 0.3601, 15.3852, 0.08169],
+        [48, 0.4286, 14.9922, 0.08343],
+        [60, 0.4439, 14.8037, 0.08544]
+      ]
+    };
+
+    const WHO_HEIGHT_MS = {
+      boy: [
+        [0, 1, 49.9, 1.9 / 49.9],
+        [6, 1, 67.6, 2.13 / 67.6],
+        [12, 1, 75.7, 2.38 / 75.7],
+        [24, 1, 87.8, 3.05 / 87.8],
+        [36, 1, 96.1, 3.25 / 96.1],
+        [48, 1, 105.3, 3.5 / 105.3],
+        [60, 1, 113.1, 3.78 / 113.1]
+      ],
+      girl: [
+        [0, 1, 49.1, 1.85 / 49.1],
+        [6, 1, 65.7, 2.1 / 65.7],
+        [12, 1, 74.0, 2.4 / 74.0],
+        [24, 1, 86.4, 3.07 / 86.4],
+        [36, 1, 95.6, 3.27 / 95.6],
+        [48, 1, 104.3, 3.45 / 104.3],
+        [60, 1, 112.0, 3.7 / 112.0]
+      ]
+    };
+
+    let state = { sex: 'boy', ageUnit: 'mo', heightUnit: 'cm', weightUnit: 'kg', chartMode: 'bmi' };
+
+    function interpolateLMS(table, ageMo) {
+      const clamped = Math.max(0, Math.min(60, ageMo));
+      for (let i = 0; i < table.length - 1; i++) {
+        const [a0, l0, m0, s0] = table[i];
+        const [a1, l1, m1, s1] = table[i + 1];
+        if (clamped >= a0 && clamped <= a1) {
+          const t = (clamped - a0) / (a1 - a0);
+          return { L: l0 + t * (l1 - l0), M: m0 + t * (m1 - m0), S: s0 + t * (s1 - s0) };
+        }
+      }
+      const last = table[table.length - 1];
+      return { L: last[1], M: last[2], S: last[3] };
+    }
+
+    function calcWhoZ(x, L, M, S) {
+      if (x <= 0 || M <= 0 || S <= 0) return 0;
+      let z = Math.abs(L) < 1e-6 ? Math.log(x / M) / S : (Math.pow(x / M, L) - 1) / (L * S);
+      if (z > 3) {
+        const sd3pos = M * Math.pow(1 + L * S * 3, 1 / L);
+        const sd2pos = M * Math.pow(1 + L * S * 2, 1 / L);
+        z = 3 + (x - sd3pos) / (sd3pos - sd2pos);
+      } else if (z < -3) {
+        const sd3neg = M * Math.pow(1 + L * S * (-3), 1 / L);
+        const sd2neg = M * Math.pow(1 + L * S * (-2), 1 / L);
+        z = -3 + (x - sd3neg) / (sd2neg - sd3neg);
+      }
+      return z;
+    }
+
+    function valueFromZ(z, L, M, S) {
+      if (Math.abs(L) < 1e-6) return M * Math.exp(S * z);
+      return M * Math.pow(1 + L * S * z, 1 / L);
+    }
+
+    function normCdf(z) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(z));
+      const d = 0.3989422804 * Math.exp(-z * z / 2);
+      const p = d * t * (0.31938153 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
+      return z > 0 ? 1 - p : p;
+    }
+
+    function formatPercentile(p) {
+      const pct = p * 100;
+      if (pct < 0.1) return '< 0.1st percentile';
+      if (pct > 99.9) return '> 99.9th percentile';
+      return `${pct.toFixed(1)}th percentile`;
+    }
+
+    function setSex(sex) {
+      state.sex = sex;
+      document.getElementById('btnBoy').classList.toggle('active', sex === 'boy');
+      document.getElementById('btnGirl').classList.toggle('active', sex === 'girl');
+      compute();
+    }
+
+    function setAgeUnit(unit) {
+      if (state.ageUnit === unit) return;
+      const input = document.getElementById('ageInput');
+      const slider = document.getElementById('ageSlider');
+      const val = parseFloat(input.value) || 0;
+      state.ageUnit = unit;
+      document.getElementById('ageUnitMo').classList.toggle('active', unit === 'mo');
+      document.getElementById('ageUnitYr').classList.toggle('active', unit === 'yr');
+      if (unit === 'yr') {
+        input.max = '5'; input.step = '0.25';
+        input.value = (val / 12).toFixed(2).replace(/\.00$/, '');
+        slider.max = '5'; slider.step = '0.25'; slider.value = input.value;
+        document.getElementById('ageSuffix').textContent = 'yr';
+      } else {
+        input.max = '60'; input.step = '1';
+        input.value = Math.round(val * 12);
+        slider.max = '60'; slider.step = '1'; slider.value = input.value;
+        document.getElementById('ageSuffix').textContent = 'mo';
+      }
+      compute();
+    }
+
+    function syncAgeSlider() {
+      document.getElementById('ageInput').value = document.getElementById('ageSlider').value;
+      compute();
+    }
+
+    function setHeightUnit(unit) {
+      if (state.heightUnit === unit) return;
+      const input = document.getElementById('heightInput');
+      const val = parseFloat(input.value) || 0;
+      state.heightUnit = unit;
+      document.getElementById('hUnitCm').classList.toggle('active', unit === 'cm');
+      document.getElementById('hUnitM').classList.toggle('active', unit === 'm');
+      if (unit === 'm') {
+        input.value = (val / 100).toFixed(3); input.step = '0.01'; input.min = '0.3'; input.max = '1.5';
+        document.getElementById('heightSuffix').textContent = 'm';
+      } else {
+        input.value = (val * 100).toFixed(1); input.step = '0.1'; input.min = '30'; input.max = '150';
+        document.getElementById('heightSuffix').textContent = 'cm';
+      }
+      compute();
+    }
+
+    function setWeightUnit(unit) {
+      if (state.weightUnit === unit) return;
+      const input = document.getElementById('weightInput');
+      const val = parseFloat(input.value) || 0;
+      state.weightUnit = unit;
+      document.getElementById('wUnitKg').classList.toggle('active', unit === 'kg');
+      document.getElementById('wUnitLbs').classList.toggle('active', unit === 'lbs');
+      if (unit === 'lbs') {
+        input.value = (val * 2.20462).toFixed(1);
+        document.getElementById('weightSuffix').textContent = 'lbs';
+      } else {
+        input.value = (val / 2.20462).toFixed(1);
+        document.getElementById('weightSuffix').textContent = 'kg';
+      }
+      compute();
+    }
+
+    function setChartMode(mode) {
+      state.chartMode = mode;
+      document.getElementById('tabBmi').classList.toggle('active', mode === 'bmi');
+      document.getElementById('tabHeight').classList.toggle('active', mode === 'height');
+      compute();
+    }
+
+    function applyPreset(sex, ageMo, heightCm, weightKg) {
+      setSex(sex);
+      if (state.ageUnit !== 'mo') setAgeUnit('mo');
+      if (state.heightUnit !== 'cm') setHeightUnit('cm');
+      if (state.weightUnit !== 'kg') setWeightUnit('kg');
+      document.getElementById('ageInput').value = ageMo;
+      document.getElementById('ageSlider').value = ageMo;
+      document.getElementById('heightInput').value = heightCm;
+      document.getElementById('weightInput').value = weightKg;
+      compute();
+    }
+
+    function classifyBmiCgs(z) {
+      if (z > 3) return { label: 'Obesity (> +3 SD)', cls: 'status-danger', short: 'Obesity' };
+      if (z > 2) return { label: 'Overweight (> +2 to +3 SD)', cls: 'status-warn', short: 'Overweight' };
+      if (z > 1) return { label: 'Normal · Risk of Overweight (> +1 SD)', cls: 'status-normal', short: 'Normal (Watch)' };
+      if (z >= -2) return { label: 'Normal Weight (-2 to +2 SD)', cls: 'status-normal', short: 'Normal Weight' };
+      if (z >= -3) return { label: 'Wasted / Thinness (-3 to -2 SD)', cls: 'status-warn', short: 'Thinness' };
+      return { label: 'Severe Thinness (< -3 SD)', cls: 'status-danger', short: 'Severe Thinness' };
+    }
+
+    function classifyHeightCgs(z) {
+      if (z > 2) return { label: 'Tall for Age (> +2 SD)', cls: 'status-tall' };
+      if (z >= -2) return { label: 'Normal Stature (-2 to +2 SD)', cls: 'status-normal' };
+      if (z >= -3) return { label: 'Stunted (-3 to -2 SD)', cls: 'status-warn' };
+      return { label: 'Severely Stunted (< -3 SD)', cls: 'status-danger' };
+    }
+
+    function compute() {
+      const rawAge = parseFloat(document.getElementById('ageInput').value) || 0;
+      const ageMo = Math.max(0, Math.min(60, state.ageUnit === 'yr' ? rawAge * 12 : rawAge));
+      document.getElementById('ageSlider').value = state.ageUnit === 'yr' ? (ageMo / 12) : ageMo;
+
+      const yrs = Math.floor(ageMo / 12);
+      const remMo = Math.round(ageMo % 12);
+      const measureType = ageMo < 24 ? 'Recumbent length standard' : 'Standing height standard';
+      document.getElementById('ageHelper').textContent = `${ageMo.toFixed(1).replace(/\.0$/, '')} months (${yrs} yr ${remMo} mo) · ${measureType}`;
+
+      const rawH = parseFloat(document.getElementById('heightInput').value) || 0;
+      const heightCm = state.heightUnit === 'm' ? rawH * 100 : rawH;
+      const heightM = heightCm / 100;
+
+      const rawW = parseFloat(document.getElementById('weightInput').value) || 0;
+      const weightKg = state.weightUnit === 'lbs' ? rawW / 2.20462 : rawW;
+
+      if (heightM <= 0 || weightKg <= 0) return;
+
+      const bmi = weightKg / (heightM * heightM);
+      const bmiLms = interpolateLMS(WHO_BMI_LMS[state.sex], ageMo);
+      const bmiZ = calcWhoZ(bmi, bmiLms.L, bmiLms.M, bmiLms.S);
+      const bmiPct = normCdf(bmiZ);
+      const bmiClass = classifyBmiCgs(bmiZ);
+
+      const hLms = interpolateLMS(WHO_HEIGHT_MS[state.sex], ageMo);
+      const haz = calcWhoZ(heightCm, hLms.L, hLms.M, hLms.S);
+      const hazPct = normCdf(haz);
+      const hazClass = classifyHeightCgs(haz);
+
+      document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+      document.getElementById('bmiFormula').textContent = `${weightKg.toFixed(1)} kg / (${heightM.toFixed(3)} m)²`;
+
+      const bmiBadge = document.getElementById('bmiStatusBadge');
+      bmiBadge.textContent = bmiClass.short;
+      bmiBadge.className = `status-badge ${bmiClass.cls}`;
+
+      document.getElementById('bmiZValue').textContent = `${bmiZ >= 0 ? '+' : ''}${bmiZ.toFixed(2)} SD`;
+      document.getElementById('bmiPctValue').textContent = formatPercentile(bmiPct);
+
+      const cgsBadge = document.getElementById('bmiCgsBadge');
+      cgsBadge.textContent = bmiClass.label;
+      cgsBadge.className = `status-badge ${bmiClass.cls}`;
+
+      document.getElementById('hazValue').textContent = `${haz >= 0 ? '+' : ''}${haz.toFixed(2)} SD`;
+      document.getElementById('hazPctValue').textContent = formatPercentile(hazPct);
+
+      const hazBadge = document.getElementById('hazBadge');
+      hazBadge.textContent = hazClass.label;
+      hazBadge.className = `status-badge ${hazClass.cls}`;
+
+      const clampedZ = Math.max(-4, Math.min(4, bmiZ));
+      document.getElementById('zMarker').style.left = `${((clampedZ + 4) / 8) * 100}%`;
+      document.getElementById('zRangeText').textContent = `Z = ${bmiZ >= 0 ? '+' : ''}${bmiZ.toFixed(2)} SD · Median BMI = ${bmiLms.M.toFixed(1)}`;
+
+      document.getElementById('clinicalSummary').innerHTML =
+        `<strong>WHO CGS Summary (${state.sex === 'boy' ? 'Boy' : 'Girl'}, ${ageMo.toFixed(0)} mo):</strong> ` +
+        `Median BMI is <strong>${bmiLms.M.toFixed(1)} kg/m²</strong> and median height is <strong>${hLms.M.toFixed(1)} cm</strong>. ` +
+        `This child's BMI (${bmi.toFixed(1)}) is <strong>${bmiClass.label}</strong>, and height (${heightCm.toFixed(1)} cm) is <strong>${hazClass.label}</strong>.`;
+
+      drawChart(ageMo, state.chartMode === 'bmi' ? bmi : heightCm);
+    }
+
+    function drawChart(childAge, childVal) {
+      const svg = document.getElementById('growthChart');
+      const W = 700, H = 320, pad = { top: 20, right: 24, bottom: 38, left: 48 };
+      const plotW = W - pad.left - pad.right, plotH = H - pad.top - pad.bottom;
+      const isBmi = state.chartMode === 'bmi';
+      const table = isBmi ? WHO_BMI_LMS[state.sex] : WHO_HEIGHT_MS[state.sex];
+      const yMin = isBmi ? 10 : 40, yMax = isBmi ? 24 : 130;
+
+      const xScale = (m) => pad.left + (m / 60) * plotW;
+      const yScale = (v) => pad.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+
+      let html = '';
+      const ySteps = isBmi ? [10, 12, 14, 16, 18, 20, 22, 24] : [40, 60, 80, 100, 120];
+      ySteps.forEach(y => {
+        const py = yScale(y);
+        html += `<line x1="${pad.left}" y1="${py}" x2="${W - pad.right}" y2="${py}" stroke="#CFEFF5" stroke-width="1" />`;
+        html += `<text x="${pad.left - 8}" y="${py + 4}" text-anchor="end" font-size="11" fill="#475569">${y}</text>`;
+      });
+
+      [0, 12, 24, 36, 48, 60].forEach(m => {
+        const px = xScale(m);
+        html += `<line x1="${px}" y1="${pad.top}" x2="${px}" y2="${H - pad.bottom}" stroke="#CFEFF5" stroke-width="1" />`;
+        html += `<text x="${px}" y="${H - pad.bottom + 18}" text-anchor="middle" font-size="11" fill="#475569">${m}m</text>`;
+      });
+
+      html += `<text x="${W / 2}" y="${H - 4}" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">Age (Months)</text>`;
+      html += `<text x="14" y="${H / 2}" text-anchor="middle" font-size="11" font-weight="600" fill="#475569" transform="rotate(-90 14 ${H / 2})">${isBmi ? 'BMI (kg/m²)' : 'Height (cm)'}</text>`;
+
+      [
+        { z: -3, color: '#DC2626', width: 1.5, dash: '4,3' },
+        { z: -2, color: '#D97706', width: 1.5, dash: '4,3' },
+        { z: 0, color: '#0891B2', width: 2.5, dash: '' },
+        { z: 2, color: '#D97706', width: 1.5, dash: '4,3' },
+        { z: 3, color: '#DC2626', width: 1.5, dash: '4,3' }
+      ].forEach(c => {
+        let d = '';
+        for (let m = 0; m <= 60; m += 2) {
+          const { L, M, S } = interpolateLMS(table, m);
+          const val = valueFromZ(c.z, L, M, S);
+          d += (m === 0 ? `M ${xScale(m).toFixed(1)} ${yScale(val).toFixed(1)}` : ` L ${xScale(m).toFixed(1)} ${yScale(val).toFixed(1)}`);
+        }
+        html += `<path d="${d}" fill="none" stroke="${c.color}" stroke-width="${c.width}" ${c.dash ? `stroke-dasharray="${c.dash}"` : ''} />`;
+      });
+
+      const cx = xScale(childAge);
+      const cy = Math.max(pad.top, Math.min(H - pad.bottom, yScale(childVal)));
+      html += `<circle cx="${cx}" cy="${cy}" r="11" fill="rgba(8,145,178,0.22)" />`;
+      html += `<circle cx="${cx}" cy="${cy}" r="5.5" fill="#164E63" stroke="#FFFFFF" stroke-width="2" />`;
+
+      svg.innerHTML = html;
+    }
+
+    compute();
+  </script>
+</body>
+</html>
