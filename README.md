@@ -1,6 +1,9 @@
-# WHO CGS BMI & Child Growth Calculator (0–60 Months)
+# WHO BMI & Child Growth Calculator (All Ages)
 
-A responsive, zero-dependency web application that automatically calculates **Body Mass Index (BMI)**, **BMI-for-Age**, and **Height-for-Age** Z-scores and percentiles using the **World Health Organization (WHO) Child Growth Standards (CGS)** LMS method for children aged `0–60` months.
+A responsive, zero-dependency web application that automatically calculates **Body Mass Index (BMI)**, **BMI-for-Age**, and **Height-for-Age** Z-scores and percentiles across all age groups:
+- **0–5 Years (0–60 months):** WHO Child Growth Standards (WHO CGS)
+- **5–19 Years (61–228 months):** WHO 2007 Growth Reference
+- **19+ Years (Adults):** WHO Adult BMI Classification
 
 ## Features & Functions
 
